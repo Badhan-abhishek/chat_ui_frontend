@@ -5,7 +5,7 @@ export interface ChatMessage {
 
 export interface ChatRequest {
   message: string;
-  conversation_history: ChatMessage[];
+  conversation_history?: ChatMessage[];
 }
 
 export interface ChatChunk {
@@ -24,7 +24,38 @@ export interface ChatError {
   content: string;
 }
 
-export type ChatStreamResponse = ChatChunk | ChatComplete | ChatError;
+export interface ChatToolCall {
+  type: 'tool_call';
+  tool_name: string;
+  description: string;
+  files: CodeFile[];
+}
+
+export type ChatStreamResponse = ChatChunk | ChatComplete | ChatError | ChatToolCall;
+
+export interface CodeFile {
+  filename: string;
+  content: string;
+  language: 'html' | 'css' | 'javascript' | 'python' | 'typescript' | 'jsx' | 'tsx' | 'json' | 'yaml' | 'markdown' | 'text';
+}
+
+export interface CodeGenerationRequest {
+  prompt: string;
+}
+
+export interface CodeGenerationResponse {
+  description: string;
+  files: CodeFile[];
+}
+
+export interface HealthResponse {
+  status: 'healthy' | 'unhealthy';
+  service: string;
+}
+
+export interface RootResponse {
+  message: string;
+}
 
 export interface ErrorResponse {
   detail: string;

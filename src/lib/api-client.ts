@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
+import { CodeGenerationResponse } from "@/types/chat";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 export class ApiError extends Error {
   constructor(
@@ -121,3 +123,15 @@ export class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+
+// Health check endpoints
+export const healthApi = {
+  root: () => apiClient.get<{ message: string }>('/'),
+  chatHealth: () => apiClient.get<{ status: string; service: string }>('/api/v1/chat/health'),
+};
+
+// Code generation endpoint
+export const codeApi = {
+  generateCode: (request: { prompt: string }) => 
+    apiClient.post<CodeGenerationResponse>('/api/v1/chat/generate-code', request),
+};

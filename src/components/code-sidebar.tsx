@@ -1,0 +1,169 @@
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { MonacoEditor } from './monaco-editor';
+import { 
+  ChevronRight, 
+  ChevronLeft, 
+  Code, 
+  FileText, 
+  X,
+  Maximize2,
+  Minimize2
+} from 'lucide-react';
+import { CodeFile } from '@/types/chat';
+import { createAnimation } from '@/lib/animation-presets';
+import { useEffect, useRef } from 'react';
+
+interface CodeSidebarProps {
+  files: CodeFile[];
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+export function CodeSidebar({ files, isOpen, onToggle }: CodeSidebarProps) {
+  const [selectedFile, setSelectedFile] = useState<CodeFile | null>(null);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (files.length > 0 && !selectedFile) {
+      setSelectedFile(files[0]);
+    }
+  }, [files, selectedFile]);
+
+  useEffect(() => {
+    if (sidebarRef.current) {
+      if (isOpen) {
+        createAnimation(sidebarRef.current, 'fadeInRight', { delay: 0 });
+      }
+    }
+  }, [isOpen]);
+
+  if (!isOpen) {
+    return (
+      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50">
+        <Button
+          onClick={onToggle}
+          variant="default"
+          size="lg"
+          className="rounded-l-none shadow-lg gap-2"
+        >
+          <Code className="h-5 w-5" />
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  const getFileIcon = (language: string) => {
+    return <FileText className="h-4 w-4" />;
+  };
+
+  const sidebarWidth = isMaximized ? 'w-full' : 'w-1/2';
+  const sidebarHeight = isMaximized ? 'h-full' : 'h-full';
+
+  return (
+    <>
+      {/* Backdrop for maximized mode */}
+      {isMaximized && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMaximized(false)}
+        />
+      )}
+      
+      <div 
+        ref={sidebarRef}
+        className={`fixed right-0 top-0 ${sidebarHeight} ${sidebarWidth} bg-amber-50 border-l-4 border-black shadow-xl z-50 flex flex-col opacity-0`}
+      >
+        {/* Header */}
+        <div className="bg-white border-b-4 border-black p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-400 neo-border neo-shadow">
+                <Code className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black uppercase tracking-wide">
+                  Code Preview
+                </h2>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {files.length} file{files.length !== 1 ? 's' : ''} generated
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setIsMaximized(!isMaximized)}
+                variant="outline"
+                size="sm"
+              >
+                {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </Button>
+              <Button
+                onClick={onToggle}
+                variant="outline"
+                size="sm"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* File Tabs */}
+        {files.length > 1 && (
+          <div className="bg-white border-b-2 border-black p-2">
+            <div className="flex gap-1 overflow-x-auto">
+              {files.map((file, index) => (
+                <Button
+                  key={index}
+                  onClick={() => setSelectedFile(file)}
+                  variant={selectedFile?.filename === file.filename ? "default" : "outline"}
+                  size="sm"
+                  className="gap-2 whitespace-nowrap"
+                >
+                  {getFileIcon(file.language)}
+                  {file.filename}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Editor Content */}
+        <div className="flex-1 p-4 overflow-hidden">
+          {selectedFile ? (
+            <MonacoEditor 
+              file={selectedFile} 
+              height={isMaximized ? 'calc(100vh - 200px)' : 'calc(100vh - 250px)'}
+            />
+          ) : (
+            <Card className="bg-white neo-shadow h-full flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="font-medium">No files to display</p>
+              </div>
+            </Card>
+          )}
+        </div>
+
+        {/* Toggle Button */}
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full">
+          <Button
+            onClick={onToggle}
+            variant="default"
+            size="lg"
+            className="rounded-r-none shadow-lg gap-2"
+          >
+            <ChevronRight className="h-4 w-4" />
+            <Code className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}

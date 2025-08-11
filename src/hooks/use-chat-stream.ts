@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
 import { streamChat } from '@/lib/chat-api';
-import { ChatMessage, ChatRequest, ChatStreamResponse } from '@/types/chat';
+import { ChatMessage, ChatRequest, ChatStreamResponse, ChatToolCall } from '@/types/chat';
+import { useCodeSidebar } from '@/contexts/code-sidebar-context';
 
 export interface UseChatStreamReturn {
   messages: ChatMessage[];
+  toolCalls: ChatToolCall[];
   isStreaming: boolean;
   error: string | null;
   sendMessage: (message: string) => Promise<void>;
@@ -12,8 +14,10 @@ export interface UseChatStreamReturn {
 
 export function useChatStream(): UseChatStreamReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [toolCalls, setToolCalls] = useState<ChatToolCall[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { addFiles } = useCodeSidebar();
 
   const sendMessage = useCallback(async (message: string) => {
     if (isStreaming) return;
@@ -58,6 +62,23 @@ export function useChatStream(): UseChatStreamReturn {
             return newMessages;
           });
           break;
+        } else if (chunk.type === 'tool_call') {
+          // Handle code generation tool calls
+          setToolCalls(prev => [...prev, chunk]);
+          
+          // Auto-add files to sidebar
+          addFiles(chunk.files);
+          
+          // Add a brief message about the tool call
+          const toolCallMessage = `Generated ${chunk.files.length} file(s) using ${chunk.tool_name}: ${chunk.description}`;
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = {
+              role: 'assistant',
+              content: assistantContent + toolCallMessage,
+            };
+            return newMessages;
+          });
         } else if (chunk.type === 'error') {
           setError(chunk.content);
           setMessages(prev => prev.slice(0, -1));
@@ -71,15 +92,17 @@ export function useChatStream(): UseChatStreamReturn {
     } finally {
       setIsStreaming(false);
     }
-  }, [messages, isStreaming]);
+  }, [messages, isStreaming, addFiles]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
+    setToolCalls([]);
     setError(null);
   }, []);
 
   return {
     messages,
+    toolCalls,
     isStreaming,
     error,
     sendMessage,

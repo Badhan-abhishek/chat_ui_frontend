@@ -4,13 +4,17 @@ import { useEffect, useRef } from 'react';
 import { useChatStream } from '@/hooks/use-chat-stream';
 import { ChatMessageComponent } from './chat-message';
 import { ChatInput } from './chat-input';
+import { ToolCallDisplay } from './tool-call-display';
+import { HealthStatus } from './health-status';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Trash2, MessageSquare, Sparkles, AlertTriangle } from 'lucide-react';
 import { createAnimation, createStaggerAnimation } from '@/lib/animation-presets';
+import { useCodeSidebar } from '@/contexts/code-sidebar-context';
 
 export function ChatContainer() {
-  const { messages, isStreaming, error, sendMessage, clearMessages } = useChatStream();
+  const { messages, toolCalls, isStreaming, error, sendMessage, clearMessages } = useChatStream();
+  const { clearFiles } = useCodeSidebar();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const emptyStateRef = useRef<HTMLDivElement>(null);
@@ -66,15 +70,21 @@ export function ChatContainer() {
               </p>
             </div>
           </div>
-          <Button
-            onClick={clearMessages}
-            variant="destructive"
-            size="sm"
-            className="gap-2"
-          >
-            <Trash2 className="h-4 w-4" />
-            Clear Chat
-          </Button>
+          <div className="flex items-center gap-3">
+            <HealthStatus />
+            <Button
+              onClick={() => {
+                clearMessages();
+                clearFiles();
+              }}
+              variant="destructive"
+              size="sm"
+              className="gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Clear All
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -114,12 +124,21 @@ export function ChatContainer() {
           <>
             {messages.map((message, index) => (
               <ChatMessageComponent
-                key={index}
+                key={`message-${index}`}
                 message={message}
                 index={index}
                 isStreaming={isStreaming && index === messages.length - 1 && message.role === 'assistant'}
               />
             ))}
+            
+            {/* Display tool calls */}
+            {toolCalls.map((toolCall, index) => (
+              <ToolCallDisplay
+                key={`tool-${index}`}
+                toolCall={toolCall}
+              />
+            ))}
+            
             <div ref={messagesEndRef} />
           </>
         )}

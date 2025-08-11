@@ -31,6 +31,12 @@ export default function Home() {
                 Start Chatting
               </Button>
             </Link>
+            <Link href="/code">
+              <Button variant="secondary" size="lg" className="text-lg px-8 py-6 h-auto">
+                <Palette className="mr-2 h-5 w-5" />
+                Generate Code
+              </Button>
+            </Link>
             <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto" asChild>
               <a href="https://nextjs.org/docs" target="_blank" rel="noopener noreferrer">
                 View Docs
