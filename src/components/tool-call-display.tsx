@@ -13,15 +13,6 @@ interface ToolCallDisplayProps {
 export function ToolCallDisplay({ toolCall }: ToolCallDisplayProps) {
   const { addFiles, openSidebar, previewArtifact } = useCodeSidebar();
 
-  const handleViewInSidebar = () => {
-    addFiles(
-      toolCall.files, 
-      toolCall.tool_name, 
-      toolCall.description
-    );
-    openSidebar();
-  };
-
   const handleViewFile = (fileIndex: number) => {
     const file = toolCall.files[fileIndex];
     addFiles(

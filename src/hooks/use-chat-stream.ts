@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { streamChat } from '@/lib/chat-api';
-import { ChatMessage, ChatRequest, ChatStreamResponse, ChatToolCall } from '@/types/chat';
+import { ChatMessage, ChatRequest, ChatToolCall } from '@/types/chat';
 import { useCodeSidebar } from '@/contexts/code-sidebar-context';
 
 export interface UseChatStreamReturn {

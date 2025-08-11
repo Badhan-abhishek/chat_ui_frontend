@@ -1,13 +1,6 @@
 import { ReactNode } from 'react';
 import { ArtifactCard } from '@/components/artifact-card';
 
-interface CodeBlock {
-  language: string;
-  code: string;
-  title?: string;
-  filename?: string;
-}
-
 export function parseMessageContent(content: string): ReactNode[] {
   const parts: ReactNode[] = [];
   let currentIndex = 0;
@@ -136,7 +129,6 @@ function generateCodeTitle(language: string, code: string, counter: number): str
 
 function generateCodeDescription(language: string, code: string): string {
   const lineCount = code.split('\n').length;
-  const charCount = code.length;
   
   // Try to generate meaningful descriptions
   if (code.includes('import') || code.includes('require')) {
