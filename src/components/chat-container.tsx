@@ -103,7 +103,7 @@ export function ChatContainer() {
                                     Welcome to AI Chat
                                 </h2>
                                 <p className="palantir-subheading">
-                                    Start a conversation by typing a message below. I'm here to help with anything you need.
+                                    Start a conversation by typing a message below. I&apos;m here to help with anything you need.
                                 </p>
                             </div>
                             <div className="grid grid-cols-1 gap-3 text-sm">
