@@ -24,6 +24,9 @@ export function useChatStream(): UseChatStreamReturn {
 
     setError(null);
     setIsStreaming(true);
+    
+    // Clear old tool calls when starting a new message to prevent showing previous artifacts
+    setToolCalls([]);
 
     const userMessage: ChatMessage = { role: 'user', content: message };
     setMessages(prev => [...prev, userMessage]);
@@ -63,8 +66,8 @@ export function useChatStream(): UseChatStreamReturn {
           });
           break;
         } else if (chunk.type === 'tool_call') {
-          // Handle code generation tool calls
-          setToolCalls(prev => [...prev, chunk]);
+          // Handle code generation tool calls - replace previous tool calls to show only the latest
+          setToolCalls([chunk]);
           
           // Auto-add files to sidebar
           addFiles(chunk.files);

@@ -40,8 +40,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
     return (
         <div
             ref={containerRef}
-            className="neo-border-thick bg-white p-6 opacity-0"
-            style={{ borderTop: '4px solid black', borderLeft: 'none', borderRight: 'none', borderBottom: 'none' }}
+            className="palantir-border-thick border-t bg-card p-6 opacity-0 palantir-gradient"
         >
             <div className="flex gap-4 items-end">
                 <div className="flex-1">
@@ -51,7 +50,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
                         onKeyDown={handleKeyDown}
                         placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
                         disabled={disabled}
-                        className="min-h-[60px] text-base font-medium resize-none"
+                        className="min-h-[60px] text-base palantir-body resize-none border-input palantir-shadow focus:palantir-shadow-md transition-all duration-200"
                         rows={2}
                     />
                 </div>
@@ -60,7 +59,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
                     onClick={handleSubmit}
                     disabled={disabled || !message.trim()}
                     size="lg"
-                    className="h-[60px] w-[60px] p-0"
+                    className="h-[60px] w-[60px] p-0 rounded-full"
                     variant={disabled ? "outline" : "default"}
                 >
                     {disabled ? (
@@ -70,7 +69,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
                     )}
                 </Button>
             </div>
-            <div className="mt-2 text-xs font-medium text-muted-foreground">
+            <div className="mt-3 text-xs palantir-caption">
                 {disabled ? 'AI is thinking...' : 'Ready to chat!'}
             </div>
         </div>

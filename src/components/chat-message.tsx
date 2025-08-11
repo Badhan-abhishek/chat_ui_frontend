@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { User, Bot, Zap } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { createAnimation } from '@/lib/animation-presets';
+import { parseMessageContent } from '@/lib/message-parser';
 
 interface ChatMessageProps {
   message: ChatMessage;
@@ -34,37 +35,43 @@ export function ChatMessageComponent({ message, isStreaming = false, index }: Ch
       <div className={`max-w-[85%] ${isUser ? 'order-2' : 'order-1'}`}>
         <Card className={`${
           isUser 
-            ? 'bg-yellow-400 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]' 
-            : 'bg-white border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
-        }`}>
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className={`p-2 rounded-none border-2 border-black ${
-                isUser ? 'bg-white' : 'bg-purple-400'
-              }`}>
+            ? 'bg-primary text-primary-foreground palantir-shadow-md' 
+            : 'bg-card palantir-shadow-md'
+        } animate-slide-up`}>
+          <div className="p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`p-2 rounded-lg ${
+                isUser 
+                  ? 'bg-primary-foreground/20 text-primary-foreground' 
+                  : 'bg-secondary text-secondary-foreground'
+              } palantir-shadow`}>
                 {isUser ? (
                   <User className="h-4 w-4" />
                 ) : (
                   <Bot className="h-4 w-4" />
                 )}
               </div>
-              <span className="font-black text-sm uppercase tracking-wide">
+              <span className="palantir-heading text-sm">
                 {isUser ? 'You' : 'AI Assistant'}
               </span>
               {isStreaming && (
-                <div className="flex items-center gap-1">
-                  <Zap className="h-3 w-3 text-green-600" />
-                  <span className="text-xs font-bold text-green-600 uppercase">Live</span>
+                <div className="flex items-center gap-2">
+                  <Zap className="h-3 w-3 text-accent" />
+                  <span className="text-xs palantir-caption text-accent">Typing...</span>
                 </div>
               )}
             </div>
             <div 
               ref={contentRef}
-              className="whitespace-pre-wrap text-sm font-medium leading-relaxed"
+              className={`text-sm leading-relaxed ${
+                isUser ? 'text-primary-foreground' : 'palantir-body'
+              }`}
             >
-              {message.content}
+              {parseMessageContent(message.content)}
               {isStreaming && (
-                <span className="inline-block w-2 h-5 bg-black ml-1 animate-pulse" />
+                <span className={`inline-block w-0.5 h-4 ml-1 animate-pulse ${
+                  isUser ? 'bg-primary-foreground' : 'bg-foreground'
+                }`} />
               )}
             </div>
           </div>

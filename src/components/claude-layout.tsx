@@ -24,49 +24,36 @@ export function ClaudeLayout({ children }: ClaudeLayoutProps) {
   const hasArtifacts = artifacts.length > 0 || files.length > 0;
 
   return (
-    <div className="flex h-screen bg-amber-50">
+    <div className="flex h-screen bg-background">
       {/* Main Chat Area */}
       <div className={`flex-1 transition-all duration-300 ${isOpen ? 'mr-0' : 'mr-0'}`}>
         {children}
-        
-        {/* View Generated Artifact Button */}
-        {hasArtifacts && !isOpen && (
-          <div className="fixed bottom-6 right-6 z-40">
-            <Button
-              onClick={toggleSidebar}
-              size="lg"
-              className="gap-2 shadow-lg neo-shadow-xl"
-            >
-              <Code className="h-5 w-5" />
-              View Generated Artifact
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Dynamic Right Sidebar */}
       {isOpen && (
-        <div className="w-1/2 border-l-4 border-black bg-white flex flex-col">
+        <div className="w-1/2 palantir-border-thick border-l bg-sidebar flex flex-col animate-slide-down">
           {/* Sidebar Header with Toggle */}
-          <div className="bg-white border-b-4 border-black p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-400 neo-border neo-shadow">
+          <div className="bg-card palantir-border-thick border-b p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-accent text-accent-foreground rounded-lg palantir-shadow">
                   <Code className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black uppercase tracking-wide">
+                  <h2 className="text-xl palantir-heading">
                     {currentArtifact?.title || 'Generated Code'}
                   </h2>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-sm palantir-subheading">
                     {currentArtifact?.description || `${files.length} file${files.length !== 1 ? 's' : ''} generated`}
                   </p>
                 </div>
               </div>
               <Button
                 onClick={toggleSidebar}
-                variant="outline"
+                variant="ghost"
                 size="sm"
+                className="h-8 w-8 p-0"
               >
                 ✕
               </Button>

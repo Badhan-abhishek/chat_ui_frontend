@@ -18,6 +18,7 @@ interface CodeSidebarContextType {
   openSidebar: () => void;
   closeSidebar: () => void;
   setView: (view: SidebarView) => void;
+  previewArtifact: (artifact: CodeArtifact) => void;
 }
 
 const CodeSidebarContext = createContext<CodeSidebarContextType | undefined>(undefined);
@@ -30,12 +31,8 @@ export function CodeSidebarProvider({ children }: { children: ReactNode }) {
   const [view, setView] = useState<SidebarView>('code');
 
   const addFiles = (newFiles: CodeFile[], title?: string, description?: string) => {
-    setFiles(prev => {
-      // Remove duplicates based on filename
-      const existingFilenames = prev.map(f => f.filename);
-      const uniqueNewFiles = newFiles.filter(f => !existingFilenames.includes(f.filename));
-      return [...prev, ...uniqueNewFiles];
-    });
+    // Clear old files when adding new ones to prevent showing old artifacts
+    setFiles(newFiles);
     
     // Create artifact if title and description provided
     if (title && description && newFiles.length > 0) {
@@ -46,7 +43,8 @@ export function CodeSidebarProvider({ children }: { children: ReactNode }) {
         files: newFiles,
         createdAt: new Date(),
       };
-      addArtifact(artifact);
+      // Clear old artifacts and set the new one
+      setArtifacts([artifact]);
       setCurrentArtifact(artifact);
     }
     
@@ -57,7 +55,9 @@ export function CodeSidebarProvider({ children }: { children: ReactNode }) {
   };
 
   const addArtifact = (artifact: CodeArtifact) => {
-    setArtifacts(prev => [...prev, artifact]);
+    // Clear old artifacts and set the new one to prevent showing old artifacts
+    setArtifacts([artifact]);
+    setCurrentArtifact(artifact);
   };
 
   const clearFiles = () => {
@@ -84,6 +84,13 @@ export function CodeSidebarProvider({ children }: { children: ReactNode }) {
     setIsOpen(false);
   };
 
+  const previewArtifact = (artifact: CodeArtifact) => {
+    setFiles(artifact.files);
+    setCurrentArtifact(artifact);
+    setView('preview');
+    setIsOpen(true);
+  };
+
   return (
     <CodeSidebarContext.Provider value={{
       files,
@@ -100,6 +107,7 @@ export function CodeSidebarProvider({ children }: { children: ReactNode }) {
       openSidebar,
       closeSidebar,
       setView,
+      previewArtifact,
     }}>
       {children}
     </CodeSidebarContext.Provider>

@@ -77,11 +77,11 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
   // For embedded mode, render simplified version
   if (embedded) {
     return (
-      <div className="h-full flex flex-col bg-amber-50">
+      <div className="h-full flex flex-col bg-sidebar">
         {/* File Tabs */}
         {files.length > 1 && (
-          <div className="bg-white border-b-2 border-black p-2">
-            <div className="flex gap-1 overflow-x-auto">
+          <div className="bg-card palantir-border-thick border-b p-3">
+            <div className="flex gap-2 overflow-x-auto">
               {files.map((file, index) => (
                 <Button
                   key={index}
@@ -113,10 +113,10 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
               />
             )
           ) : (
-            <Card className="bg-white neo-shadow h-full flex items-center justify-center">
+            <Card className="palantir-shadow h-full flex items-center justify-center">
               <div className="text-center text-muted-foreground">
                 <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="font-medium">No files to display</p>
+                <p className="palantir-body">No files to display</p>
               </div>
             </Card>
           )}
@@ -137,20 +137,20 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
       
       <div 
         ref={sidebarRef}
-        className={`fixed right-0 top-0 ${sidebarHeight} ${sidebarWidth} bg-amber-50 border-l-4 border-black shadow-xl z-50 flex flex-col opacity-0`}
+        className={`fixed right-0 top-0 ${sidebarHeight} ${sidebarWidth} bg-sidebar palantir-border-thick border-l palantir-shadow-xl z-50 flex flex-col opacity-0`}
       >
         {/* Header */}
-        <div className="bg-white border-b-4 border-black p-4">
+        <div className="bg-card palantir-border-thick border-b p-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-400 neo-border neo-shadow">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-accent text-accent-foreground rounded-lg palantir-shadow">
                 <Code className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-xl font-black uppercase tracking-wide">
+                <h2 className="text-xl palantir-heading">
                   Code Preview
                 </h2>
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-sm palantir-subheading">
                   {files.length} file{files.length !== 1 ? 's' : ''} generated
                 </p>
               </div>
@@ -158,14 +158,14 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
             <div className="flex gap-2">
               <Button
                 onClick={() => setIsMaximized(!isMaximized)}
-                variant="outline"
+                variant="ghost"
                 size="sm"
               >
                 {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
               </Button>
               <Button
                 onClick={onToggle}
-                variant="outline"
+                variant="ghost"
                 size="sm"
               >
                 <X className="h-4 w-4" />
@@ -176,8 +176,8 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
 
         {/* File Tabs */}
         {files.length > 1 && (
-          <div className="bg-white border-b-2 border-black p-2">
-            <div className="flex gap-1 overflow-x-auto">
+          <div className="bg-card palantir-border-thick border-b p-3">
+            <div className="flex gap-2 overflow-x-auto">
               {files.map((file, index) => (
                 <Button
                   key={index}
@@ -209,10 +209,10 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
               />
             )
           ) : (
-            <Card className="bg-white neo-shadow h-full flex items-center justify-center">
+            <Card className="palantir-shadow h-full flex items-center justify-center">
               <div className="text-center text-muted-foreground">
                 <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="font-medium">No files to display</p>
+                <p className="palantir-body">No files to display</p>
               </div>
             </Card>
           )}

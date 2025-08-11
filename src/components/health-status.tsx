@@ -58,17 +58,17 @@ export function HealthStatus() {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'healthy':
-                return 'bg-green-100 border-green-500';
+                return 'bg-green-50 border-green-200';
             case 'unhealthy':
-                return 'bg-red-100 border-red-500';
+                return 'bg-red-50 border-red-200';
             default:
-                return 'bg-gray-100 border-gray-500';
+                return 'bg-muted border-border';
         }
     };
 
     return (
-        <Card className={`neo-shadow p-3 ${getStatusColor(status.api)}`}>
-            <div className="flex items-center justify-between text-xs font-bold">
+        <Card className={`palantir-shadow p-3 ${getStatusColor(status.api)}`}>
+            <div className="flex items-center justify-between text-xs palantir-caption">
                 <div className="flex items-center gap-2">
                     {getStatusIcon(status.api)}
                     <span>API</span>
