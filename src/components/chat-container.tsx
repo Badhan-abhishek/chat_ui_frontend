@@ -14,7 +14,7 @@ import { useCodeSidebar } from '@/contexts/code-sidebar-context';
 
 export function ChatContainer() {
   const { messages, toolCalls, isStreaming, error, sendMessage, clearMessages } = useChatStream();
-  const { clearFiles } = useCodeSidebar();
+  const { clearArtifacts } = useCodeSidebar();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const emptyStateRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ export function ChatContainer() {
   }, [error]);
 
   return (
-    <div className="flex flex-col h-screen max-w-5xl mx-auto bg-amber-50">
+    <div className="flex flex-col h-screen bg-amber-50">
       {/* Header */}
       <div 
         ref={headerRef}
@@ -75,7 +75,7 @@ export function ChatContainer() {
             <Button
               onClick={() => {
                 clearMessages();
-                clearFiles();
+                clearArtifacts();
               }}
               variant="destructive"
               size="sm"

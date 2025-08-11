@@ -15,7 +15,11 @@ export function ToolCallDisplay({ toolCall }: ToolCallDisplayProps) {
   const { addFiles, openSidebar } = useCodeSidebar();
 
   const handleViewInSidebar = () => {
-    addFiles(toolCall.files);
+    addFiles(
+      toolCall.files, 
+      toolCall.tool_name, 
+      toolCall.description
+    );
     openSidebar();
   };
 

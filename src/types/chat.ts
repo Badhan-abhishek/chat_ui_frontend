@@ -39,6 +39,16 @@ export interface CodeFile {
   language: 'html' | 'css' | 'javascript' | 'python' | 'typescript' | 'jsx' | 'tsx' | 'json' | 'yaml' | 'markdown' | 'text';
 }
 
+export interface CodeArtifact {
+  id: string;
+  title: string;
+  description: string;
+  files: CodeFile[];
+  createdAt: Date;
+}
+
+export type SidebarView = 'code' | 'preview';
+
 export interface CodeGenerationRequest {
   prompt: string;
 }

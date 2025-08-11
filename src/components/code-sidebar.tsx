@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MonacoEditor } from './monaco-editor';
+import { CodePreview } from './code-preview';
 import { 
   ChevronRight, 
   ChevronLeft, 
@@ -13,7 +14,7 @@ import {
   Maximize2,
   Minimize2
 } from 'lucide-react';
-import { CodeFile } from '@/types/chat';
+import { CodeFile, SidebarView } from '@/types/chat';
 import { createAnimation } from '@/lib/animation-presets';
 import { useEffect, useRef } from 'react';
 
@@ -21,9 +22,11 @@ interface CodeSidebarProps {
   files: CodeFile[];
   isOpen: boolean;
   onToggle: () => void;
+  view?: SidebarView;
+  embedded?: boolean;
 }
 
-export function CodeSidebar({ files, isOpen, onToggle }: CodeSidebarProps) {
+export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded = false }: CodeSidebarProps) {
   const [selectedFile, setSelectedFile] = useState<CodeFile | null>(null);
   const [isMaximized, setIsMaximized] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -35,14 +38,15 @@ export function CodeSidebar({ files, isOpen, onToggle }: CodeSidebarProps) {
   }, [files, selectedFile]);
 
   useEffect(() => {
-    if (sidebarRef.current) {
+    if (sidebarRef.current && !embedded) {
       if (isOpen) {
         createAnimation(sidebarRef.current, 'fadeInRight', { delay: 0 });
       }
     }
-  }, [isOpen]);
+  }, [isOpen, embedded]);
 
-  if (!isOpen) {
+  // For embedded mode, don't show the floating button
+  if (!isOpen && !embedded) {
     return (
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50">
         <Button
@@ -58,12 +62,68 @@ export function CodeSidebar({ files, isOpen, onToggle }: CodeSidebarProps) {
     );
   }
 
+  // For embedded mode, don't render anything if not open
+  if (!isOpen && embedded) {
+    return null;
+  }
+
   const getFileIcon = (language: string) => {
     return <FileText className="h-4 w-4" />;
   };
 
   const sidebarWidth = isMaximized ? 'w-full' : 'w-1/2';
   const sidebarHeight = isMaximized ? 'h-full' : 'h-full';
+
+  // For embedded mode, render simplified version
+  if (embedded) {
+    return (
+      <div className="h-full flex flex-col bg-amber-50">
+        {/* File Tabs */}
+        {files.length > 1 && (
+          <div className="bg-white border-b-2 border-black p-2">
+            <div className="flex gap-1 overflow-x-auto">
+              {files.map((file, index) => (
+                <Button
+                  key={index}
+                  onClick={() => setSelectedFile(file)}
+                  variant={selectedFile?.filename === file.filename ? "default" : "outline"}
+                  size="sm"
+                  className="gap-2 whitespace-nowrap"
+                >
+                  {getFileIcon(file.language)}
+                  {file.filename}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="flex-1 p-4 overflow-hidden">
+          {selectedFile ? (
+            view === 'code' ? (
+              <MonacoEditor 
+                file={selectedFile} 
+                height="calc(100vh - 200px)"
+              />
+            ) : (
+              <CodePreview 
+                files={files}
+                selectedFile={selectedFile}
+              />
+            )
+          ) : (
+            <Card className="bg-white neo-shadow h-full flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="font-medium">No files to display</p>
+              </div>
+            </Card>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -137,10 +197,17 @@ export function CodeSidebar({ files, isOpen, onToggle }: CodeSidebarProps) {
         {/* Editor Content */}
         <div className="flex-1 p-4 overflow-hidden">
           {selectedFile ? (
-            <MonacoEditor 
-              file={selectedFile} 
-              height={isMaximized ? 'calc(100vh - 200px)' : 'calc(100vh - 250px)'}
-            />
+            view === 'code' ? (
+              <MonacoEditor 
+                file={selectedFile} 
+                height={isMaximized ? 'calc(100vh - 200px)' : 'calc(100vh - 250px)'}
+              />
+            ) : (
+              <CodePreview 
+                files={files}
+                selectedFile={selectedFile}
+              />
+            )
           ) : (
             <Card className="bg-white neo-shadow h-full flex items-center justify-center">
               <div className="text-center text-muted-foreground">
