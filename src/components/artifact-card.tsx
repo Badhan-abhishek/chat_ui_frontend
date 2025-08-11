@@ -81,28 +81,28 @@ export function ArtifactCard({
       case 'html':
       case 'xml':
       case 'markdown':
-        return <FileText className="h-4 w-4" />;
+        return <FileText className="h-3 w-3 sm:h-4 sm:w-4" />;
       default:
-        return <Code className="h-4 w-4" />;
+        return <Code className="h-3 w-3 sm:h-4 sm:w-4" />;
     }
   };
 
   return (
-    <Card className="palantir-shadow-md bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 my-4">
-      <div className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3 flex-1">
-            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg palantir-shadow-sm">
+    <Card className="palantir-shadow-md bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 my-3 sm:my-4">
+      <div className="p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+          <div className="flex items-start gap-2 sm:gap-3 flex-1">
+            <div className="p-1.5 sm:p-2 bg-blue-100 text-blue-600 rounded-lg palantir-shadow-sm">
               {getLanguageIcon()}
             </div>
             <div className="flex-1">
-              <h3 className="palantir-heading text-sm font-medium text-blue-900 mb-1">
+              <h3 className="palantir-heading text-xs sm:text-sm font-medium text-blue-900 mb-1">
                 {title}
               </h3>
               <p className="palantir-body text-xs text-blue-700 mb-2">
                 {description}
               </p>
-              <div className="flex items-center gap-2 text-xs text-blue-600">
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs text-blue-600">
                 <span className="px-2 py-1 bg-blue-100 rounded-full palantir-caption">
                   {language}
                 </span>
@@ -114,25 +114,27 @@ export function ArtifactCard({
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2">
             {isPreviewable() && (
               <Button
                 onClick={handlePreviewArtifact}
                 size="sm"
                 variant="outline"
-                className="gap-2 border-blue-300 text-blue-600 hover:bg-blue-50"
+                className="gap-1 sm:gap-2 border-blue-300 text-blue-600 hover:bg-blue-50 text-xs sm:text-sm"
               >
                 <Globe className="h-3 w-3" />
-                Preview
+                <span className="hidden sm:inline">Preview</span>
+                <span className="sm:hidden">View</span>
               </Button>
             )}
             <Button
               onClick={handleViewArtifact}
               size="sm"
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white palantir-shadow-sm"
+              className="gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700 text-white palantir-shadow-sm text-xs sm:text-sm"
             >
               <Eye className="h-3 w-3" />
-              View Code
+              <span className="hidden sm:inline">View Code</span>
+              <span className="sm:hidden">Code</span>
             </Button>
           </div>
         </div>

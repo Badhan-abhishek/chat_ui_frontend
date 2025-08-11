@@ -40,9 +40,9 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
     return (
         <div
             ref={containerRef}
-            className="palantir-border-thick border-t bg-card p-6 opacity-0 palantir-gradient"
+            className="palantir-border-thick border-t bg-card p-3 sm:p-6 opacity-0 palantir-gradient"
         >
-            <div className="flex gap-4 items-end">
+            <div className="flex gap-2 sm:gap-4 items-end">
                 <div className="flex-1">
                     <Textarea
                         value={message}
@@ -50,7 +50,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
                         onKeyDown={handleKeyDown}
                         placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
                         disabled={disabled}
-                        className="min-h-[60px] text-base palantir-body resize-none border-input palantir-shadow focus:palantir-shadow-md transition-all duration-200"
+                        className="min-h-[50px] sm:min-h-[60px] text-sm sm:text-base palantir-body resize-none border-input palantir-shadow focus:palantir-shadow-md transition-all duration-200"
                         rows={2}
                     />
                 </div>
@@ -59,17 +59,17 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
                     onClick={handleSubmit}
                     disabled={disabled || !message.trim()}
                     size="lg"
-                    className="h-[60px] w-[60px] p-0 rounded-full"
+                    className="h-[50px] w-[50px] sm:h-[60px] sm:w-[60px] p-0 rounded-full"
                     variant={disabled ? "outline" : "default"}
                 >
                     {disabled ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                     ) : (
-                        <Send className="h-5 w-5" />
+                        <Send className="h-4 w-4 sm:h-5 sm:w-5" />
                     )}
                 </Button>
             </div>
-            <div className="mt-3 text-xs palantir-caption">
+            <div className="mt-2 sm:mt-3 text-xs palantir-caption">
                 {disabled ? 'AI is thinking...' : 'Ready to chat!'}
             </div>
         </div>

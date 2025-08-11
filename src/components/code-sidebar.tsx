@@ -52,15 +52,15 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
 
   if (!isOpen && !embedded) {
     return (
-      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50">
+      <div className="fixed right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-50">
         <Button
           onClick={onToggle}
           variant="default"
           size="lg"
-          className="rounded-l-none shadow-lg gap-2"
+          className="rounded-l-none shadow-lg gap-1 sm:gap-2 h-12 w-12 sm:h-14 sm:w-auto sm:px-4"
         >
-          <Code className="h-5 w-5" />
-          <ChevronLeft className="h-4 w-4" />
+          <Code className="h-4 w-4 sm:h-5 sm:w-5" />
+          <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:block" />
         </Button>
       </div>
     );
@@ -71,10 +71,10 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
   }
 
   const getFileIcon = () => {
-    return <FileText className="h-4 w-4" />;
+    return <FileText className="h-3 w-3 sm:h-4 sm:w-4" />;
   };
 
-  const sidebarWidth = isMaximized ? 'w-full' : 'w-full md:w-1/2';
+  const sidebarWidth = isMaximized ? 'w-full' : 'w-full lg:w-1/2';
   const sidebarHeight = isMaximized ? 'h-full' : 'h-full';
 
   const renderContent = () => {
@@ -94,8 +94,8 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
     return (
       <Card className="palantir-shadow h-full flex items-center justify-center">
         <div className="text-center text-muted-foreground">
-          <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p className="palantir-body">No file selected</p>
+          <Code className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+          <p className="palantir-body text-sm sm:text-base">No file selected</p>
         </div>
       </Card>
     );
@@ -104,37 +104,38 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
   if (embedded) {
     return (
       <div className="h-full flex flex-col bg-sidebar">
-        <div className="bg-card palantir-border-thick border-b p-3 flex justify-between items-center">
-          <div className="flex gap-2">
-            <Button onClick={() => setActiveView('code')} variant={activeView === 'code' ? 'default' : 'outline'} size="sm" className="gap-2">
-              <Code className="h-4 w-4" /> Code
+        <div className="bg-card palantir-border-thick border-b p-2 sm:p-3 flex justify-between items-center">
+          <div className="flex gap-1 sm:gap-2">
+            <Button onClick={() => setActiveView('code')} variant={activeView === 'code' ? 'default' : 'outline'} size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Code className="h-3 w-3 sm:h-4 sm:w-4" /> Code
             </Button>
-            <Button onClick={() => setActiveView('preview')} variant={activeView === 'preview' ? 'default' : 'outline'} size="sm" className="gap-2">
-              <Eye className="h-4 w-4" /> Preview
+            <Button onClick={() => setActiveView('preview')} variant={activeView === 'preview' ? 'default' : 'outline'} size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4" /> Preview
             </Button>
           </div>
         </div>
 
         {files.length > 1 && activeView === 'code' && (
-          <div className="bg-card palantir-border-thick border-b p-3">
-            <div className="flex gap-2 overflow-x-auto">
+          <div className="bg-card palantir-border-thick border-b p-2 sm:p-3">
+            <div className="flex gap-1 sm:gap-2 overflow-x-auto">
               {files.map((file, index) => (
                 <Button
                   key={index}
                   onClick={() => setSelectedFile(file)}
                   variant={selectedFile?.filename === file.filename ? "default" : "outline"}
                   size="sm"
-                  className="gap-2 whitespace-nowrap"
+                  className="gap-1 sm:gap-2 whitespace-nowrap text-xs sm:text-sm"
                 >
                   {getFileIcon()}
-                  {file.filename}
+                  <span className="hidden sm:inline">{file.filename}</span>
+                  <span className="sm:hidden">{file.filename.length > 10 ? file.filename.substring(0, 10) + '...' : file.filename}</span>
                 </Button>
               ))}
             </div>
           </div>
         )}
 
-        <div className="flex-1 p-4 overflow-hidden">
+        <div className="flex-1 p-2 sm:p-4 overflow-hidden">
           {renderContent()}
         </div>
       </div>
@@ -154,44 +155,46 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
         ref={sidebarRef}
         className={`fixed right-0 top-0 ${sidebarHeight} ${sidebarWidth} bg-sidebar palantir-border-thick border-l palantir-shadow-xl z-50 flex flex-col opacity-0`}
       >
-        <div className="bg-card palantir-border-thick border-b p-5">
+        <div className="bg-card palantir-border-thick border-b p-3 sm:p-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-accent text-accent-foreground rounded-lg palantir-shadow">
-                <Code className="h-5 w-5" />
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="p-2 sm:p-3 bg-accent text-accent-foreground rounded-lg palantir-shadow">
+                <Code className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <h2 className="text-xl palantir-heading">
+                <h2 className="text-lg sm:text-xl palantir-heading">
                   {activeView === 'code' ? 'Code Editor' : 'Live Preview'}
                 </h2>
-                <p className="text-sm palantir-subheading">
+                <p className="text-xs sm:text-sm palantir-subheading">
                   {files.length} file{files.length !== 1 ? 's' : ''} generated
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex gap-2">
-                <Button onClick={() => setActiveView('code')} variant={activeView === 'code' ? 'default' : 'outline'} size="sm" className="gap-2">
-                  <Code className="h-4 w-4" /> Code
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex gap-1 sm:gap-2">
+                <Button onClick={() => setActiveView('code')} variant={activeView === 'code' ? 'default' : 'outline'} size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Code className="h-3 w-3 sm:h-4 sm:w-4" /> Code
                 </Button>
-                <Button onClick={() => setActiveView('preview')} variant={activeView === 'preview' ? 'default' : 'outline'} size="sm" className="gap-2">
-                  <Eye className="h-4 w-4" /> Preview
+                <Button onClick={() => setActiveView('preview')} variant={activeView === 'preview' ? 'default' : 'outline'} size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Eye className="h-3 w-3 sm:h-4 sm:w-4" /> Preview
                 </Button>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 <Button
                   onClick={() => setIsMaximized(!isMaximized)}
                   variant="ghost"
                   size="sm"
+                  className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                 >
-                  {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {isMaximized ? <Minimize2 className="h-3 w-3 sm:h-4 sm:w-4" /> : <Maximize2 className="h-3 w-3 sm:h-4 sm:w-4" />}
                 </Button>
                 <Button
                   onClick={onToggle}
                   variant="ghost"
                   size="sm"
+                  className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             </div>
@@ -199,25 +202,26 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
         </div>
 
         {files.length > 1 && activeView === 'code' && (
-          <div className="bg-card palantir-border-thick border-b p-3">
-            <div className="flex gap-2 overflow-x-auto">
+          <div className="bg-card palantir-border-thick border-b p-2 sm:p-3">
+            <div className="flex gap-1 sm:gap-2 overflow-x-auto">
               {files.map((file, index) => (
                 <Button
                   key={index}
                   onClick={() => setSelectedFile(file)}
                   variant={selectedFile?.filename === file.filename ? "default" : "outline"}
                   size="sm"
-                  className="gap-2 whitespace-nowrap"
+                  className="gap-1 sm:gap-2 whitespace-nowrap text-xs sm:text-sm"
                 >
                   {getFileIcon()}
-                  {file.filename}
+                  <span className="hidden sm:inline">{file.filename}</span>
+                  <span className="sm:hidden">{file.filename.length > 10 ? file.filename.substring(0, 10) + '...' : file.filename}</span>
                 </Button>
               ))}
             </div>
           </div>
         )}
 
-        <div className="flex-1 p-4 overflow-hidden">
+        <div className="flex-1 p-2 sm:p-4 overflow-hidden">
           {renderContent()}
         </div>
 
@@ -226,10 +230,10 @@ export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code
             onClick={onToggle}
             variant="default"
             size="lg"
-            className="rounded-r-none shadow-lg gap-2"
+            className="rounded-r-none shadow-lg gap-1 sm:gap-2 h-12 w-12 sm:h-14 sm:w-auto sm:px-4"
           >
-            <ChevronRight className="h-4 w-4" />
-            <Code className="h-5 w-5" />
+            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 hidden sm:block" />
+            <Code className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
       </div>

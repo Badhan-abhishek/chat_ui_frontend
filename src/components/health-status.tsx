@@ -47,11 +47,11 @@ export function HealthStatus() {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'healthy':
-                return <CheckCircle className="h-4 w-4 text-green-600" />;
+                return <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />;
             case 'unhealthy':
-                return <XCircle className="h-4 w-4 text-red-600" />;
+                return <XCircle className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />;
             default:
-                return <Loader2 className="h-4 w-4 animate-spin text-gray-600" />;
+                return <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin text-gray-600" />;
         }
     };
 
@@ -67,13 +67,13 @@ export function HealthStatus() {
     };
 
     return (
-        <Card className={`palantir-shadow p-3 ${getStatusColor(status.api)}`}>
+        <Card className={`palantir-shadow p-2 sm:p-3 ${getStatusColor(status.api)}`}>
             <div className="flex items-center justify-between text-xs palantir-caption">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                     {getStatusIcon(status.api)}
                     <span>API</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                     {getStatusIcon(status.chat)}
                     <span>Chat</span>
                 </div>
