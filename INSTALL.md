@@ -7,13 +7,18 @@
 2. **Navigate to the project directory:**
    ```bash
    cd chat_ui_frontend
-   ```
-3. **Install dependencies:**
+
+3. **Install pnpm (if not already installed):**
    ```bash
-   npm install
+   npm install -g pnpm
    ```
-4. **Run the development server:**
+
+4. **Install dependencies:**
    ```bash
-   npm run dev
+   pnpm install
    ```
-5. **Open your browser and visit [http://localhost:3000](http://localhost:3000)**
+5. **Run the development server:**
+   ```bash
+   pnpm run dev
+   ```
+6. **Open your browser and visit [http://localhost:3000](http://localhost:3000)**
