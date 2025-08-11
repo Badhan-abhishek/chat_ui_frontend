@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MonacoEditor } from './monaco-editor';
@@ -12,11 +12,11 @@ import {
   FileText, 
   X,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Eye
 } from 'lucide-react';
 import { CodeFile, SidebarView } from '@/types/chat';
 import { createAnimation } from '@/lib/animation-presets';
-import { useEffect, useRef } from 'react';
 
 interface CodeSidebarProps {
   files: CodeFile[];
@@ -26,9 +26,10 @@ interface CodeSidebarProps {
   embedded?: boolean;
 }
 
-export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded = false }: CodeSidebarProps) {
+export function CodeSidebar({ files, isOpen, onToggle, view: initialView = 'code', embedded = false }: CodeSidebarProps) {
   const [selectedFile, setSelectedFile] = useState<CodeFile | null>(null);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [activeView, setActiveView] = useState<'code' | 'preview'>(initialView);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,7 +46,10 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
     }
   }, [isOpen, embedded]);
 
-  // For embedded mode, don't show the floating button
+  useEffect(() => {
+    setActiveView(initialView);
+  }, [initialView]);
+
   if (!isOpen && !embedded) {
     return (
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50">
@@ -62,24 +66,56 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
     );
   }
 
-  // For embedded mode, don't render anything if not open
   if (!isOpen && embedded) {
     return null;
   }
 
-  const getFileIcon = (language: string) => {
+  const getFileIcon = () => {
     return <FileText className="h-4 w-4" />;
   };
 
-  const sidebarWidth = isMaximized ? 'w-full' : 'w-1/2';
+  const sidebarWidth = isMaximized ? 'w-full' : 'w-full md:w-1/2';
   const sidebarHeight = isMaximized ? 'h-full' : 'h-full';
 
-  // For embedded mode, render simplified version
+  const renderContent = () => {
+    if (activeView === 'preview') {
+      return <CodePreview files={files} />;
+    }
+
+    if (selectedFile) {
+      return (
+        <MonacoEditor 
+          file={selectedFile} 
+          height={isMaximized ? 'calc(100vh - 200px)' : 'calc(100vh - 250px)'}
+        />
+      );
+    }
+
+    return (
+      <Card className="palantir-shadow h-full flex items-center justify-center">
+        <div className="text-center text-muted-foreground">
+          <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p className="palantir-body">No file selected</p>
+        </div>
+      </Card>
+    );
+  };
+
   if (embedded) {
     return (
       <div className="h-full flex flex-col bg-sidebar">
-        {/* File Tabs */}
-        {files.length > 1 && (
+        <div className="bg-card palantir-border-thick border-b p-3 flex justify-between items-center">
+          <div className="flex gap-2">
+            <Button onClick={() => setActiveView('code')} variant={activeView === 'code' ? 'default' : 'outline'} size="sm" className="gap-2">
+              <Code className="h-4 w-4" /> Code
+            </Button>
+            <Button onClick={() => setActiveView('preview')} variant={activeView === 'preview' ? 'default' : 'outline'} size="sm" className="gap-2">
+              <Eye className="h-4 w-4" /> Preview
+            </Button>
+          </div>
+        </div>
+
+        {files.length > 1 && activeView === 'code' && (
           <div className="bg-card palantir-border-thick border-b p-3">
             <div className="flex gap-2 overflow-x-auto">
               {files.map((file, index) => (
@@ -90,7 +126,7 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
                   size="sm"
                   className="gap-2 whitespace-nowrap"
                 >
-                  {getFileIcon(file.language)}
+                  {getFileIcon()}
                   {file.filename}
                 </Button>
               ))}
@@ -98,28 +134,8 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
           </div>
         )}
 
-        {/* Content */}
         <div className="flex-1 p-4 overflow-hidden">
-          {selectedFile ? (
-            view === 'code' ? (
-              <MonacoEditor 
-                file={selectedFile} 
-                height="calc(100vh - 200px)"
-              />
-            ) : (
-              <CodePreview 
-                files={files}
-                selectedFile={selectedFile}
-              />
-            )
-          ) : (
-            <Card className="palantir-shadow h-full flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="palantir-body">No files to display</p>
-              </div>
-            </Card>
-          )}
+          {renderContent()}
         </div>
       </div>
     );
@@ -127,7 +143,6 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
 
   return (
     <>
-      {/* Backdrop for maximized mode */}
       {isMaximized && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -139,7 +154,6 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
         ref={sidebarRef}
         className={`fixed right-0 top-0 ${sidebarHeight} ${sidebarWidth} bg-sidebar palantir-border-thick border-l palantir-shadow-xl z-50 flex flex-col opacity-0`}
       >
-        {/* Header */}
         <div className="bg-card palantir-border-thick border-b p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -148,34 +162,43 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
               </div>
               <div>
                 <h2 className="text-xl palantir-heading">
-                  Code Preview
+                  {activeView === 'code' ? 'Code Editor' : 'Live Preview'}
                 </h2>
                 <p className="text-sm palantir-subheading">
                   {files.length} file{files.length !== 1 ? 's' : ''} generated
                 </p>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => setIsMaximized(!isMaximized)}
-                variant="ghost"
-                size="sm"
-              >
-                {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-              </Button>
-              <Button
-                onClick={onToggle}
-                variant="ghost"
-                size="sm"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
+                <Button onClick={() => setActiveView('code')} variant={activeView === 'code' ? 'default' : 'outline'} size="sm" className="gap-2">
+                  <Code className="h-4 w-4" /> Code
+                </Button>
+                <Button onClick={() => setActiveView('preview')} variant={activeView === 'preview' ? 'default' : 'outline'} size="sm" className="gap-2">
+                  <Eye className="h-4 w-4" /> Preview
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setIsMaximized(!isMaximized)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                </Button>
+                <Button
+                  onClick={onToggle}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* File Tabs */}
-        {files.length > 1 && (
+        {files.length > 1 && activeView === 'code' && (
           <div className="bg-card palantir-border-thick border-b p-3">
             <div className="flex gap-2 overflow-x-auto">
               {files.map((file, index) => (
@@ -186,7 +209,7 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
                   size="sm"
                   className="gap-2 whitespace-nowrap"
                 >
-                  {getFileIcon(file.language)}
+                  {getFileIcon()}
                   {file.filename}
                 </Button>
               ))}
@@ -194,31 +217,10 @@ export function CodeSidebar({ files, isOpen, onToggle, view = 'code', embedded =
           </div>
         )}
 
-        {/* Editor Content */}
         <div className="flex-1 p-4 overflow-hidden">
-          {selectedFile ? (
-            view === 'code' ? (
-              <MonacoEditor 
-                file={selectedFile} 
-                height={isMaximized ? 'calc(100vh - 200px)' : 'calc(100vh - 250px)'}
-              />
-            ) : (
-              <CodePreview 
-                files={files}
-                selectedFile={selectedFile}
-              />
-            )
-          ) : (
-            <Card className="palantir-shadow h-full flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <Code className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="palantir-body">No files to display</p>
-              </div>
-            </Card>
-          )}
+          {renderContent()}
         </div>
 
-        {/* Toggle Button */}
         <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-full">
           <Button
             onClick={onToggle}
